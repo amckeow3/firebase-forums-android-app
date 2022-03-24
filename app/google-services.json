@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "97794864857",
+    "project_id": "fir-forums-app",
+    "storage_bucket": "fir-forums-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97794864857:android:8bf20c3c71116d8429b0c8",
+        "android_client_info": {
+          "package_name": "com.example.group8_inclass09"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "97794864857-aa9tbcjgqalmgc3d1mgb2pvqifdbj8fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLI0S-gxcYCohHbK50VceyKe2bi8eM18c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97794864857-aa9tbcjgqalmgc3d1mgb2pvqifdbj8fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
