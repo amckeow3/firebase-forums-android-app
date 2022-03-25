@@ -85,10 +85,10 @@ public class NewForumFragment extends Fragment {
 
                 // An alert dialog is displayed if any of the of the required fields are missing or empty
                 if (title.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("Missing field")
                             .setMessage("Please enter a forum title")
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Log.d(TAG, "onClick: Ok Clicked");
@@ -96,7 +96,7 @@ public class NewForumFragment extends Fragment {
                             });
                     builder.create().show();
                 } else if (description.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("Missing field")
                             .setMessage("Please enter a forum description")
                             .setNeutralButton("Ok", new DialogInterface.OnClickListener() {

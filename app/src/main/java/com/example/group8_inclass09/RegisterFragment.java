@@ -1,6 +1,8 @@
 package com.example.group8_inclass09;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -93,6 +95,16 @@ public class RegisterFragment extends Fragment {
                                                 });
                                         mListener.goToForumsList();
                                     } else {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                        builder.setTitle("Registration  Error")
+                                                .setMessage(task.getException().getMessage())
+                                                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Log.d(TAG, "onClick: Ok clicked");
+                                                    }
+                                                });
+                                        builder.create().show();
                                         Log.d(TAG, "onComplete: Registration Error" + task.getException().getMessage());
                                     }
                                 }

@@ -1,6 +1,8 @@
 package com.example.group8_inclass09;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -63,6 +65,16 @@ public class LoginFragment extends Fragment {
                                         Log.d(TAG, "onComplete: User " + user);
                                         mListener.goToForumsList();
                                     } else {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                        builder.setTitle("Login Error")
+                                                .setMessage(task.getException().getMessage())
+                                                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Log.d(TAG, "onClick: Ok clicked");
+                                                    }
+                                                });
+                                        builder.create().show();
                                         Log.d(TAG, "onComplete: Login Error" + task.getException().getMessage());
                                     }
                                 }

@@ -19,13 +19,18 @@ import com.example.group8_inclass09.databinding.ForumListItemBinding;
 import com.example.group8_inclass09.databinding.FragmentForumsBinding;
 import com.example.group8_inclass09.databinding.FragmentLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,6 +113,8 @@ public class ForumsFragment extends Fragment {
 
     public void getData() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        /*
         db.collection("forums")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -120,6 +127,7 @@ public class ForumsFragment extends Fragment {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 forum.setForumId(document.getId());
                                 forum.setTitle(document.getString("title"));
+                                forum.setForumId(document.getId());
                                 forum.setCreator(document.getString("creator"));
                                 forum.setCreatorId(document.getString("creatorId"));
                                 forum.setDescription(document.getString("description"));
@@ -141,6 +149,37 @@ public class ForumsFragment extends Fragment {
                         } else {
                             Log.d(TAG, "Error getting documents: " + task.getException());
                         }
+                    }
+                });
+                */
+        db.collection("forums")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        forums.clear();
+                        for (QueryDocumentSnapshot document: value) {
+                            Forum forum = new Forum();
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            forum.setForumId(document.getId());
+                            forum.setTitle(document.getString("title"));
+                            forum.setForumId(document.getId());
+                            forum.setCreator(document.getString("creator"));
+                            forum.setCreatorId(document.getString("creatorId"));
+                            forum.setDescription(document.getString("description"));
+                            forum.setDateTime(document.getDate("dateTime"));
+                            forums.add(forum);
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView = binding.forumsRecyclerView;
+                                recyclerView.setHasFixedSize(true);
+                                linearLayoutManager = new LinearLayoutManager(getContext());
+                                recyclerView.setLayoutManager(linearLayoutManager);
+                                forumsListAdapter = new ForumsListAdapter(forums);
+                                recyclerView.setAdapter(forumsListAdapter);
+                            }
+                        });
                     }
                 });
     }
@@ -184,16 +223,26 @@ public class ForumsFragment extends Fragment {
                 mBinding.textViewForumTitle.setText(mForum.title);
                 mBinding.textViewCreator.setText(mForum.creator);
                 mBinding.textViewForumDescription.setText(mForum.description);
-
                 mAuth = FirebaseAuth.getInstance();
                 FirebaseUser user = mAuth.getCurrentUser();
                 String userId = user.getUid();
-                Log.d(TAG, "setupUI: UiD for user " + userId);
-                Log.d(TAG, "setupUI: Uid for post" + mForum.creatorId);
+                SimpleDateFormat sdf = new SimpleDateFormat ("MM/dd/yyyy hh:mm a");
+                String formattedDate = sdf.format(mForum.dateTime);
+                mBinding.textViewDateTime.setText(formattedDate);
 
                 if (userId.matches(mForum.creatorId)) {
                     mBinding.imageFilterViewTrash.setImageResource(R.drawable.rubbish_bin);
                     mBinding.imageFilterViewTrash.setVisibility(View.VISIBLE);
+                    mBinding.imageFilterViewTrash.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("forums")
+                                    .document(mForum.forumId)
+                                    .delete();
+                            getData();
+                        }
+                    });
                 } else {
                     mBinding.imageFilterViewTrash.setVisibility(View.INVISIBLE);
                 }
