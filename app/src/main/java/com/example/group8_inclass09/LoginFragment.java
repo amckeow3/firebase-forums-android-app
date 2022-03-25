@@ -59,6 +59,9 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "onComplete: Logged In Successfully");
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        Log.d(TAG, "onComplete: User " + user);
+                                        mListener.goToForumsList();
                                     } else {
                                         Log.d(TAG, "onComplete: Login Error" + task.getException().getMessage());
                                     }
@@ -81,6 +84,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Login");
     }
 
     @Override
@@ -91,5 +95,6 @@ public class LoginFragment extends Fragment {
 
     interface LoginFragmentListener {
         void goToAccountRegistration();
+        void goToForumsList();
     }
 }

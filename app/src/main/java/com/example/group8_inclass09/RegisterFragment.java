@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegisterFragment extends Fragment {
     private static final String TAG = "Register Fragment";
@@ -35,6 +36,7 @@ public class RegisterFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        Log.d(TAG, "OnCreate Registration: thread = " + Thread.currentThread().getId());
     }
 
     @Override
@@ -69,9 +71,27 @@ public class RegisterFragment extends Fragment {
                             .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Log.d(TAG, "OnRegister: thread = " + Thread.currentThread().getId());
                                     if (task.isSuccessful()) {
-                                        Log.d(TAG, "onComplete: Logged In Successfully");
+                                        Log.d(TAG, "onComplete: Registration is Successful");
                                         FirebaseUser user = mAuth.getCurrentUser();
+                                        Log.d(TAG, "onComplete: User " + user);
+
+                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                .setDisplayName(name)
+                                                .build();
+
+                                        user.updateProfile(profileUpdates)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            FirebaseUser updatedUser = mAuth.getCurrentUser();
+                                                            Log.d(TAG, "User Display Name = " + updatedUser.getDisplayName());
+                                                        }
+                                                    }
+                                                });
+                                        mListener.goToForumsList();
                                     } else {
                                         Log.d(TAG, "onComplete: Registration Error" + task.getException().getMessage());
                                     }
@@ -87,6 +107,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Create New Account");
     }
 
     @Override
@@ -97,5 +118,6 @@ public class RegisterFragment extends Fragment {
 
     interface RegisterFragmentListener {
         void cancelRegistration();
+        void goToForumsList();
     }
 }
